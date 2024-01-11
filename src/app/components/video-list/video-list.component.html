@@ -1,0 +1,71 @@
+<div class="video-list" *ngIf="!isLoading">
+  <div class="toggle-button" (click)="toggleView()">
+    <div class="toggle-icon" [class.active]="isListView">
+      <img src="assets/grid.png" alt="Grid View" />
+    </div>
+    <div class="toggle-icon" [class.active]="!isListView">
+      <img src="assets/list.png" alt="List View" />
+    </div>
+  </div>
+
+  <!-- Grid View -->
+  <div *ngIf="isListView">
+    <div class="grid-view">
+      <div
+        class="video-card grid-card"
+        *ngFor="let video of videos"
+        (click)="navigateToVideo(video.id)"
+      >
+        <img [src]="video.previewUrl" alt="{{ video.title }}" />
+        <div class="grid-details">
+          <h3>{{ video.title }}</h3>
+          <div class="info-container">
+            <div class="left-info">
+              <p>{{ video.createdDate | date : "dd/MM/yyyy" }}</p>
+            </div>
+            <div class="right-info">
+              <div class="user-info">
+                <img
+                  [src]="video.author.pictureUrl"
+                  alt="{{ video.author.name }}"
+                />
+                <p>{{ video.author.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="!isListView">
+    <div class="list-view">
+      <div
+        class="video-card list-card"
+        *ngFor="let video of videos"
+        (click)="navigateToVideo(video.id)"
+      >
+        <div class="list-preview">
+          <img [src]="video.previewUrl" alt="{{ video.title }}" />
+        </div>
+        <div class="list-details">
+          <div class="info-container">
+            <h3>{{ video.title }}</h3>
+            <div class="right-info">
+              <p class="date">{{ video.createdDate | date : "dd/MM/yyyy" }}</p>
+              <div class="user-info">
+                <img
+                  [src]="video.author.pictureUrl"
+                  alt="{{ video.author.name }}"
+                />
+                <p>{{ video.author.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isLoading">Loading video list...</div>

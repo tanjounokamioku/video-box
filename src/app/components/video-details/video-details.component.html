@@ -1,0 +1,108 @@
+<div class="video-outer">
+  <div class="video-details" *ngIf="video">
+    <div *ngIf="user.id === video.author.id" class="editable-container">
+      <h2 appContentEditable #editableTitle>
+        {{ video.title || "Video Title" }}
+      </h2>
+      <button
+        [disabled]="editableTitle.textContent?.trim() === video.title?.trim()"
+        [ngClass]="{
+          'disabled-button':
+            editableTitle.textContent?.trim() === video.title?.trim()
+        }"
+        (click)="saveTitle(editableTitle.textContent || 'Video Title')"
+        class="save-button"
+      >
+        Save
+      </button>
+    </div>
+    <h2 *ngIf="user.id !== video.author.id">
+      {{ video.title }}
+    </h2>
+    <div class="video-container">
+      <video
+        #videoPlayer
+        controls
+        width="100%"
+        height="auto"
+        crossorigin="anonymous"
+        *ngIf="video"
+      >
+        <source [src]="video.url" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="star-icon-container">
+        <img
+          src="assets/star.png"
+          alt="Star"
+          class="star-icon"
+          [@starAnimation]="starAnimationState"
+        />
+      </div>
+    </div>
+    <div class="video-info" *ngIf="video">
+      <div class="author-info">
+        <button class="action-button" (click)="takeSnapshot()">
+          <img src="assets/snapshot.png" alt="Snapshot" />
+          Snapshot
+        </button>
+
+        <button class="action-button" (click)="starVideo()">
+          <img src="assets/star.png" alt="Star" />
+          Star
+        </button>
+      </div>
+      <div class="author-info">
+        <img [src]="video.author.pictureUrl" alt="{{ video.author.name }}" />
+        <p>{{ video.author.name }}</p>
+      </div>
+    </div>
+    <div class="list-view">
+      <h3>Reactions</h3>
+      <div class="video-card list-card" *ngIf="reactions.length === 0">
+        <p>No reactions yet</p>
+      </div>
+      <div
+        class="video-card list-card"
+        *ngFor="let reaction of reactions"
+        [class.highlighted-card]="isCardHighlighted === reaction.timeframe"
+        (click)="navigateInVideo(reaction.timeframe)"
+      >
+        <div class="list-preview">
+          <img
+            [src]="
+              reaction.type === 'star'
+                ? 'assets/star.png'
+                : 'assets/snapshot.png'
+            "
+            alt="{{ reaction.type }}"
+          />
+        </div>
+        <div class="list-details">
+          <h3>
+            <span class="timeframe"
+              >{{ formatTimeframe(reaction.timeframe) }}
+            </span>
+            <span class="plain-text"
+              >{{ reaction.author.name }}
+              {{
+                reaction.type === "star"
+                  ? "starred the video"
+                  : "created a snapshot"
+              }}
+              ({{ formatDate(reaction.postedDate || reaction.createdDate) }})
+            </span>
+          </h3>
+          <div class="right-info" *ngIf="reaction.imageUrl">
+            <img [src]="reaction.imageUrl" alt="Snapshot" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="video-description" *ngIf="video.description">
+      <h3>Description</h3>
+      <p>{{ video.description }}</p>
+    </div>
+  </div>
+  <div class="loading-message" *ngIf="!video">Video is loading...</div>
+</div>
